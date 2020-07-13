@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Calculadora de Tercer grau</title>
+      <style>
+
+        .btt{
+            border-radius: 5px;
+            background: none;
+            outline: none;
+            border:none;
+            font-weight: bold;
+            font-size:15px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        #Calcula{
+            color: blue;
+        }
+        #Neteja{
+            color:lime;
+        }
+        #Sortir{
+            color:red;
+        }
+        #main{
+            /* align-items: center; */
+            background:linear-gradient(90deg, rgba(255,0,0,1) 0%, rgba(255,0,0,0.01) 55%);
+            font-family: Arial, Helvetica, sans-serif;
+            float:left;
+            margin:auto ;
+            text-align:left;
+            padding:20px;
+            /* display:contents */
+        }
+       
+      </style>
+
+      <script>
+          window.onload=function(){        
+            let calcula = document.getElementById('Calcula');
+            let neteja = document.getElementById('Neteja');
+            let sortir = document.getElementById('Sortir');
+            
+
+
+            calcula.addEventListener('click', solve,false);
+            neteja.addEventListener('click', clear, false);
+            //sortir.addEventListener('click', solve, false);           
+          }
+        function complex(rel,img){
+            let im=parseFloat(img);
+            let re=parseFloat(rel);
+
+            im = im.toPrecision(6);
+            re = re.toPrecision(6);
+            
+
+            if(im<0 &! re==0){
+            return re+'-'+Math.abs(im)+'i';
+            }
+            else if(im<0 && re==0){
+            return '-'+Math.abs(im)+'i';
+            }
+            else{
+            return re+'+'+Math.abs(im)+'i';
+            }
+        }   
+        function clear(){
+            document.getElementById('equacio').innerHTML='<strong>Equació: </strong>ax^3+bx^2+cx+d=0';
+            document.getElementById('R').innerText='R= ';
+            document.getElementById('S').innerText='S= ';
+            document.getElementById('Q').innerText='Q= ';
+            document.getElementById('X1').innerText='x1= ';
+            document.getElementById('X2').innerText='x2= ';
+            document.getElementById('X3').innerText='x3= ';
+            document.getElementById('a').value='';
+            document.getElementById('b').value='';
+            document.getElementById('c').value='';
+            document.getElementById('d').value='';
+  
+        }
+        function fillinfo(k,a,b,c,x1,x2,x3,S,R,Q){
+            document.getElementById('equacio').innerHTML='<strong>Equació: </strong>'+k+'x^3+'+a*k+'x^2+'+b*k+'x+'+c*k+'=0';
+            document.getElementById('R').innerText+=R;
+            document.getElementById('S').innerText+=S;
+            document.getElementById('Q').innerText+=Q;
+            document.getElementById('X1').innerText+=x1;
+            document.getElementById('X2').innerText+=x2;
+            document.getElementById('X3').innerText+=x3;
+        }
+
+        function solve(){
+            var k,a,b,c,S,R,Q,x1,x2,x3,sgn_R;
+            document.getElementById('equacio').innerHTML='<strong>Equació: </strong>ax^3+bx^2+cx+d=0';
+            document.getElementById('R').innerText='R= ';
+            document.getElementById('S').innerText='S= ';
+            document.getElementById('Q').innerText='Q= ';
+            document.getElementById('X1').innerText='x1= ';
+            document.getElementById('X2').innerText='x2= ';
+            document.getElementById('X3').innerText='x3= ';
+
+            k = document.getElementById('a').value;
+            a = document.getElementById('b').value/k;
+            b = document.getElementById('c').value/k;
+            c = document.getElementById('d').value/k;
+            
+            if(k==0){
+                alert('El camp "a" no pot ser 0!!')
+            }
+            
+            R = (2 * (a ** 3) - 9 * a * b + 27 * c) / 54;
+            Q = ((a ** 2) - (3 * b)) / 9;
+            S = (Q ** 3) - (R ** 2);
+
+            if (R > 0){ sgn_R = 1;}
+            else if( R < 0){ sgn_R = -1;}
+	        else{ sgn_R = 0;}
+            
+            if(S>0){
+                let alfa = (1 / 3) * Math.acos(R / Math.sqrt(Q ** 3));
+                x1 = -2 * Math.sqrt(Q) * Math.cos(alfa) - a / 3;
+                x2 = -2 * Math.sqrt(Q) * Math.cos(alfa + (2 * Math.PI) / 3) - a / 3;
+                x3 = -2 * Math.sqrt(Q) * Math.cos(alfa - (2 * Math.PI) / 3) - a / 3;
+                x1 = x1.toPrecision(6);
+                x2 = x2.toPrecision(6);
+                x3 = x3.toPrecision(6);
+            }
+            else if(S<0){
+                if (Q>0) { 
+                    let alfa = (1 / 3) * Math.acosh(Math.abs(R) / Math.sqrt(Q ** 3));
+                    x1 = -2 * sgn_R * Math.sqrt(Q) * Math.cosh(alfa) - a / 3;
+                    x2 = complex(sgn_R * Math.sqrt(Q) * Math.cosh(alfa) - a / 3, Math.sqrt(3) * Math.sqrt(Math.abs(Q)) * Math.sinh(alfa));
+                    x3 = complex(sgn_R * Math.sqrt(Q) * Math.cosh(alfa) - a / 3, -(Math.sqrt(3) * Math.sqrt(Math.abs(Q)) * Math.sinh(alfa)));
+                    x1 = x1.toPrecision(6);
+                    x2 = x2.toPrecision(6);
+                    x3 = x3.toPrecision(6);
+                }
+                else if (Q<0) {//cas 1,1,1,1
+                    let alfa = (1 / 3) * Math.asinh(Math.abs(R) / Math.sqrt((Math.abs(Q)) ** 3));
+                    x1 = -2 * sgn_R * Math.sqrt(Math.abs(Q)) * Math.sinh(alfa) - a / 3;
+                    x2=complex(sgn_R * (Math.sqrt(Math.abs(Q))) * (Math.sinh(alfa)) - a / 3, Math.sqrt(3) * Math.sqrt(Math.abs(Q)) * Math.cosh(alfa));
+                    x3=complex(sgn_R * (Math.sqrt(Math.abs(Q))) * (Math.sinh(alfa)) - a / 3, -(Math.sqrt(3) * Math.sqrt(Math.abs(Q)) * Math.cosh(alfa)));
+
+                    //x1 = x1.toPrecision(6);
+                 }
+                else { 
+                    let parametre = c - ((a / 3) ** 3);
+                    x1 = -(Math.abs(c - (a / 3) ** 3) ** (1 / 3)) - a / 3;
+                    if (parametre < 0){ x1 = -x1;}
+                    x2 = complex(-((a + x1) / 2), 0.5 * Math.sqrt(Math.abs((a - 3 * x1) * (a + x1) - 4 * b)));
+                    x3 = complex(-((a + x1) / 2), -0.5 * Math.sqrt(Math.abs((a - 3 * x1) * (a + x1) - 4 * b)));
+                    x1 = x1.toPrecision(6);
+                    x2 = x2.toPrecision(6);
+                    x3 = x3.toPrecision(6);
+                }
+            }
+            else{
+                x1 = -2 * sgn_R * Math.sqrt(Q) - a / 3;
+                x2 = sgn_R * Math.sqrt(Q) - a / 3;
+                x1 = x1.toPrecision(6);
+                x2 = x2.toPrecision(6);
+            }
+            R=R.toPrecision(6);
+            S=S.toPrecision(6);
+            Q=Q.toPrecision(6);
+            fillinfo(k,a,b,c,x1,x2,x3,S,R,Q);
+
+          }
+      </script>
+
+  </head>
+
+  <body id='body'>
+      <section >
+          <div id='main'>
+              <div id="equacio"><strong>Equació: </strong>ax^3+bx^2+cx+d=0</div>
+              <table id='inputs'>
+                  <tr>
+                      <td>a= <input type="number"class='input' id='a' ></td>
+                  </tr>
+                  <tr>
+                      <td>b= <input type="number"class='input'id='b'></td>
+                  </tr>
+                  <tr> 
+                      <td>c= <input type="number" class='input'id='c'></td>
+                  </tr>
+                  <tr>
+                      <td>d= <input type="number" class='input' id='d'></td>
+                  </tr>
+              </table>
+              <table id='botons'>
+
+                  <tr>
+                      <br>
+                      <td autofocus><input autofocus type='button' id='Calcula' value="Calcula" class='btt'></td>
+
+                      <td><input type='button' id='Neteja'value="Neteja" class='btt'></td>
+
+                      <td><input type='button' id='Sortir'value="Sortir"class='btt'></td>
+                  </tr>
+              </table>
+              <table>
+
+                  <tr>
+                      <br><td id='X1' class="sol">X1= </td>
+                  </tr>
+                  <tr>
+                      <td id='X2' class="sol">X2= </td>
+                  </tr>
+                  <tr>
+                      <td id='X3' class="sol">X3= </td>
+                  </tr>
+              </table>
+
+              <table id='info'>
+                  <tr>
+                      <br><td>Informació</td>
+                  </tr>
+                  <tr>
+                      <td id='S'>S= </td>
+                  </tr>
+                  <tr>
+                      <td id='R'>R= </td>
+                  </tr>
+                  <tr>
+                      <td id='Q'>Q= </td>
+                  </tr>
+
+              </table>
+
+          </div>
+      </section>
+  </body>
+</html>
